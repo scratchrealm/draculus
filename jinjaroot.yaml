@@ -1,0 +1,8 @@
+projectName: draculus
+pythonProjectVersion: 0.1.0
+projectAuthor: Jeremy Magland
+projectAuthorEmail: jmagland@flatironinstitute.org
+projectDescription: Drac U Lus!
+projectUrl:
+projectBugTrackerUrl:
+pythonPackageDir: .
