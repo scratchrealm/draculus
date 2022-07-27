@@ -20,7 +20,6 @@ if (!queryParams.parentOrigin) {
 const startListeningToParent = () => {
     window.addEventListener('message', e => {
         const msg = e.data
-        console.log('--- got message', JSON.stringify(msg))
         if (!msg) return
         if (isMessageToChild(msg)) {
             if (msg.type === 'figurlResponse') {
