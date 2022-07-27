@@ -30,8 +30,24 @@ kachery-cloud-init
 ```python
 import draculus as dr
 
-# TODO
+@dr.function('test-sum-1')
+@dr.parameter('x', dtype='float') # parameter types can be: float, int, str
+@dr.parameter('y', dtype='float')
+@dr.output(dtype='float') # output types can be: float, int, str, ndarray, markdown
+def test_sum(x: float, y: float):
+    return x + y
+
+if __name__ == '__main__':
+    X = dr.Draculus()
+    X.add_function(test_sum)
+    X.start(label='test')
+
+    # This is a live backend
+    # Keep this running in a terminal
+    # Tasks will run on this machine
 ```
+
+For more examples, see [example1.py](./examples/example1.py).
 
 ## For developers
 

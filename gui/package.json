@@ -13,6 +13,7 @@
     "@types/node": "^16.11.45",
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",
+    "@types/react-syntax-highlighter": "^15.5.3",
     "assert": "npm:assert-browserify",
     "buffer": "npm:buffer-browserify",
     "crypto": "npm:crypto-browserify",
@@ -21,7 +22,11 @@
     "react-scripts": "5.0.1",
     "stream": "npm:stream-browserify",
     "typescript": "^4.7.4",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "github-markdown-css": "^5.0.0",
+    "react-markdown": "^4.3.1",
+    "react-syntax-highlighter": "^15.5.0",
+    "path": "npm:path-browserify"
   },
   "devDependencies": {},
   "scripts": {

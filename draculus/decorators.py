@@ -12,7 +12,8 @@ def function(name: str):
 def parameter(name: str, *, dtype: str):
     def decorator(func):
         parameters: List[DrFunctionParameter] = getattr(func, '_draculus_parameters', [])
-        parameters.append(
+        parameters.insert(
+            0,
             DrFunctionParameter(name=name, dtype=dtype)
         )
         setattr(func, '_draculus_parameters', parameters)

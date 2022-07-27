@@ -1,8 +1,9 @@
-import { Button, Table, TableBody, TableCell, TableRow } from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import { Task, TaskStatusView, useCalculationTask } from "figurl";
 import { TaskJobStatus } from "figurl/viewInterface/MessageToChildTypes";
 import { FunctionComponent, useEffect } from "react";
 import DrFunctionJob from "./DrFunctionJob";
+import OutputDisplay from "./OutputDisplay";
 
 type Props = {
     job: DrFunctionJob
@@ -11,6 +12,7 @@ type Props = {
 }
 
 const JobWidget: FunctionComponent<Props> = ({job, onTaskStatusChange, onCancel}) => {
+    console.log('----- x', job.parameterValues)
     const {returnValue, task, taskStatus} = useCalculationTask<any>(job.function.name, job.parameterValues)
     useEffect(() => {
         onTaskStatusChange(job, task, taskStatus)
@@ -27,15 +29,13 @@ const JobWidget: FunctionComponent<Props> = ({job, onTaskStatusChange, onCancel}
     else {
         return (
             <div>
-                Task completed.
-                <Table className="Table1" style={{maxWidth: 200}}>
-                    <TableBody>
-                        <TableRow>
-                            <TableCell>Output</TableCell>
-                            <TableCell>{returnValue}</TableCell>
-                        </TableRow>
-                    </TableBody>
-                </Table>
+                <h3>Task completed.</h3>
+                <div>Output:</div>
+                <div>&nbsp;</div>
+                <OutputDisplay
+                    drFunction={job.function}
+                    output={returnValue}
+                />
             </div>
         )
     }

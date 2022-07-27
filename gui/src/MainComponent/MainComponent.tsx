@@ -44,6 +44,7 @@ const MainComponent: FunctionComponent<Props> = ({data}) => {
     }, [selectedFunction, functions])
     const [parameterValues, parameterValuesDispatch] = useReducer(parameterValuesReducer, {})
     const handleParameterValueChange = useCallback((p: DrFunctionParameter, value: any) => {
+        console.log('--- setpv', p.name, value)
         parameterValuesDispatch({
             type: 'setParameterValue',
             parameter: p,
@@ -52,6 +53,7 @@ const MainComponent: FunctionComponent<Props> = ({data}) => {
     }, [])
     const handleRun = useCallback(() => {
         if (!selectedFunction) return
+        console.log('---- pvs', parameterValues)
         setJob({
             jobId: randomAlphaString(10),
             function: selectedFunction,

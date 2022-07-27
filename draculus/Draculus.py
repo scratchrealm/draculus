@@ -65,6 +65,8 @@ class Draculus:
         print(F.url(label=label, project_id=project_id))
         print('======================================================')
         print('')
+        print('This is a live backend. Keep this running in a terminal. Tasks will run on this machine.')
+        print('')
         T = TaskBackend(project_id=project_id, num_workers=4, threads_per_worker=1)
         for func in self._functions:
             T.register_task_handler(task_type='calculation', task_name=func.name, task_function=func.f)

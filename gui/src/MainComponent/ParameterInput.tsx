@@ -21,25 +21,46 @@ const ParameterInput: FunctionComponent<Props> = ({parameter, value, onChange}) 
 
     useEffect(() => {
         if (internalValue === undefined) return
-        let val: number
+        console.log('---- testa', internalValue, parameter.dtype)
+        let val: any
         try {
-            val = parseFloat(internalValue)
+            console.log('---- testb', internalValue)
+            if (parameter.dtype === 'float') {
+                val = parseFloat(internalValue)
+                if (isNaN(val)) {
+                    onChange(parameter, undefined)
+                    setOkay(false)
+                    return
+                }
+            }
+            else if (parameter.dtype === 'int') {
+                val = parseInt(internalValue)
+                if (isNaN(val)) {
+                    onChange(parameter, undefined)
+                    setOkay(false)
+                    return
+                }
+            }
+            else if (parameter.dtype === 'str') {
+                console.log('---- testc', internalValue)
+                val = internalValue
+            }
+            else {
+                throw Error('Unexpected parameter.dtype')
+            }
         }
         catch(err) {
+            console.warn('Problem with parameter', err)
             onChange(parameter, undefined)
             setOkay(false)
             return
         }
-        if (isNaN(val)) {
-            onChange(parameter, undefined)
-            setOkay(false)
-            return
-        }
+        console.log('---- onchange', internalValue, val)
         onChange(parameter, val)
         setOkay(true)
     }, [internalValue, parameter, onChange])
 
-    if (parameter.dtype === 'float') {
+    if ((parameter.dtype === 'float') || (parameter.dtype === 'int') || (parameter.dtype === 'str')) {
         return (
             <div>
                 <div style={{float: 'left'}}>
