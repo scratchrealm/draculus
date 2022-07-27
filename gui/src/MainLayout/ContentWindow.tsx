@@ -1,4 +1,6 @@
-import { FunctionComponent, useState } from "react"
+import { FunctionComponent, useCallback } from "react"
+import Job from "./Job"
+import { useJobs } from "./JobsContext"
 import JobsTable from "./JobsTable"
 import JobView from "./JobView"
 
@@ -10,18 +12,19 @@ type Props = {
     backgroundColor: string
 }
 
-type Mode = 'jobs' | 'job'
-
 const ContentWindow: FunctionComponent<Props> = ({left, top, width, height, backgroundColor}) => {
-    const [mode, setMode] = useState<Mode>('jobs')
+    const {setCurrentJob, currentJob} = useJobs()
+    const handleJobClick = useCallback((job: Job) => {
+        setCurrentJob(job)
+    }, [setCurrentJob])
     return (
         <div style={{left, top, width, height, position: "absolute", backgroundColor}}>
             {
-                mode === 'jobs' ? (
-                    <JobsTable width={width} height={height} />
-                ) : mode === 'job' ? (
-                    <JobView width={width} height={height} />
-                ) : <span />
+                currentJob === undefined ? (
+                    <JobsTable onJobClick={handleJobClick} width={width} height={height} />
+                ) : (
+                    <JobView job={currentJob} width={width} height={height} />
+                )
             }
         </div>
     )

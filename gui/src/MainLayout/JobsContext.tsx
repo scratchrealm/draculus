@@ -5,42 +5,100 @@ const urlSearchParams = new URLSearchParams(window.location.search)
 const queryParams = Object.fromEntries(urlSearchParams.entries())
 export const initialUrlState = JSON.parse(queryParams.s || '{}')
 
+type JobsState = {
+    jobs?: Job[]
+    selectedJobIds?: string[]
+    currentJob?: Job
+}
+
 type JobsAction = {
     type: 'addJob',
     job: Job
+} | {
+    type: 'setSelectedJobIds',
+    jobIds: string[]
+} | {
+    type: 'selectJob',
+    jobId: string
+    selected: boolean
+} | {
+    type: 'setCurrentJob',
+    job: Job | undefined
 }
 
-const jobsReducer = (s: Job[] | undefined, a: JobsAction) => {
+const jobsReducer = (s: JobsState, a: JobsAction) => {
     if (a.type === 'addJob') {
-        return [...(s || emptyJobsList), a.job]
+        return {
+            ...s,
+            jobs: [...(s?.jobs || emptyJobsList), a.job]
+        }
+    }
+    else if (a.type === 'setSelectedJobIds') {
+        return {
+            ...s,
+            selectedJobIds: a.jobIds
+        }
+    }
+    else if (a.type === 'selectJob') {
+        if (a.selected) {
+            return {
+                ...s,
+                selectedJobIds: [...(s?.selectedJobIds || []).filter(id => (id !== a.jobId)), a.jobId]
+            }
+        }
+        else {
+            return {
+                ...s,
+                selectedJobIds: [...(s?.selectedJobIds || []).filter(id => (id !== a.jobId))]
+            }
+        }
+    }
+    else if (a.type === 'setCurrentJob') {
+        return {
+            ...s,
+            currentJob: a.job
+        }
     }
     else return s
 }
 
-const JobsContext = React.createContext<{
-    jobs?: Job[],
-    jobsDispatch?: (a: JobsAction) => void
-}>({})
-
 const emptyJobsList: Job[] = []
+const emptyJobsState: JobsState = {}
+
+const JobsContext = React.createContext<{
+    jobsState: JobsState,
+    jobsDispatch?: (a: JobsAction) => void
+}>({jobsState: emptyJobsState})
 
 export const useJobs = () => {
     const c = useContext(JobsContext)
-    const {jobs, jobsDispatch} = c
+    const {jobsState, jobsDispatch} = c
 
     const addJob = useCallback((job: Job) => {
         jobsDispatch && jobsDispatch({type: 'addJob', job})
     }, [jobsDispatch])
 
+    const selectJob = useCallback((jobId: string, selected: boolean) => {
+        jobsDispatch && jobsDispatch({type: 'selectJob', jobId, selected})
+    }, [jobsDispatch])
+
+    const setCurrentJob = useCallback((job: Job | undefined) => {
+        jobsDispatch && jobsDispatch({type: 'setCurrentJob', job})
+    }, [jobsDispatch])
+
     return {
-        jobs: jobs || emptyJobsList,
-        addJob
+        jobs: jobsState.jobs || emptyJobsList,
+        selectedJobIds: jobsState.selectedJobIds || [],
+        currentJob: jobsState.currentJob,
+        selectJob,
+        addJob,
+        setCurrentJob
     }
 }
 
 export const SetupJobs: FunctionComponent<PropsWithChildren<{}>> = (props) => {
-    const [jobs, jobsDispatch] = useReducer(jobsReducer, emptyJobsList)
-    const value = useMemo(() => ({jobs, jobsDispatch}), [jobs, jobsDispatch])
+    const [jobsState, jobsDispatch] = useReducer(jobsReducer, emptyJobsState)
+    const value = useMemo(() => ({jobsState, jobsDispatch}), [jobsState, jobsDispatch])
     return (
         <JobsContext.Provider value={value}>
             {props.children}

@@ -1,4 +1,4 @@
-type JobStatus = 'waiting' | 'started' | 'error' | 'finished'
+export type JobStatus = 'waiting' | 'started' | 'error' | 'finished'
 
 type Job = {
     jobId: string

@@ -7,6 +7,7 @@ import LeftPanel from "./LeftPanel"
 import RightToolbar from "./RightToolbar"
 import TopToolbar from "./TopToolbar"
 import useVisibility from "./useVisibility"
+import './MainLayout.css'
 
 type Props = {
     width: number
@@ -23,7 +24,7 @@ const colors = {
     leftPanel: 'red',
     rightToolbar: 'blue',
     topToolbar: 'yellow',
-    contentWindow: 'orange',
+    contentWindow: '',
     composePopup: 'magenta'
 }
 
