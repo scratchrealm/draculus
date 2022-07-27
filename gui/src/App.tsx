@@ -1,8 +1,8 @@
 import { DraculusData, isDraculusData } from 'MainComponent/DraculusData';
+import MainLayout from 'MainLayout/MainLayout';
 import { useEffect, useState } from 'react';
 import './App.css';
 import { getFigureData, useWindowDimensions } from './figurl';
-import MainComponent from './MainComponent/MainComponent';
 
 
 function App() {
@@ -33,11 +33,15 @@ function App() {
   }
 
   return (
-    <MainComponent
-      data={data}
-      width={width - 10}  // we don't want the scrollbar to appear even when the menu is opened
-      height={height - 5} // we don't want the scrollbar to appear
+    <MainLayout
+      width={width}
+      height={height}
     />
+    // <MainComponent
+    //   data={data}
+    //   width={width - 10}  // we don't want the scrollbar to appear even when the menu is opened
+    //   height={height - 5} // we don't want the scrollbar to appear
+    // />
   )
 }
 
