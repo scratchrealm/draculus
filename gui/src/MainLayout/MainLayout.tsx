@@ -2,6 +2,7 @@ import { FunctionComponent } from "react"
 import AppBar from "./AppBar"
 import ComposePopup from "./ComposePopup"
 import ContentWindow from "./ContentWindow"
+import { SetupJobs } from "./JobsContext"
 import LeftPanel from "./LeftPanel"
 import RightToolbar from "./RightToolbar"
 import TopToolbar from "./TopToolbar"
@@ -34,18 +35,27 @@ const MainLayout: FunctionComponent<Props> = ({width, height}) => {
     const composePopupHeight = composePopupWidth
     const composePopupVisibility = useVisibility()
     return (
-        <div style={{width, height, position: "absolute"}}>
-            <AppBar backgroundColor={colors.appBar} top={0} left={0} width={width} height={appBarHeight} />
-            <LeftPanel onCompose={composePopupVisibility.handleOpen} backgroundColor={colors.leftPanel} top={appBarHeight} left={0} width={leftPanelWidth} height={height - appBarHeight} />
-            <RightToolbar backgroundColor={colors.rightToolbar} top={appBarHeight} left={width - rightToolbarWidth} width={rightToolbarWidth} height={height - appBarHeight} />
-            <TopToolbar backgroundColor={colors.topToolbar} top={appBarHeight} left={leftPanelWidth} width={width - leftPanelWidth - rightToolbarWidth} height={topToolbarHeight} />
-            <ContentWindow backgroundColor={colors.contentWindow} top={appBarHeight + topToolbarHeight} left={leftPanelWidth} width={contentWindowWidth} height={contentWindowHeight} />
-            {
-                composePopupVisibility.visible && (
-                    <ComposePopup onClose={composePopupVisibility.handleClose} backgroundColor={colors.composePopup} top={height - composePopupHeight} left={width - rightToolbarWidth - composePopupWidth} width={composePopupWidth} height={composePopupHeight} />
-                )
-            }
-        </div>
+        <SetupJobs>
+            <div style={{width, height, position: "absolute"}}>
+                <AppBar backgroundColor={colors.appBar} top={0} left={0} width={width} height={appBarHeight} />
+                <LeftPanel onCompose={composePopupVisibility.handleOpen} backgroundColor={colors.leftPanel} top={appBarHeight} left={0} width={leftPanelWidth} height={height - appBarHeight} />
+                <RightToolbar backgroundColor={colors.rightToolbar} top={appBarHeight} left={width - rightToolbarWidth} width={rightToolbarWidth} height={height - appBarHeight} />
+                <TopToolbar backgroundColor={colors.topToolbar} top={appBarHeight} left={leftPanelWidth} width={width - leftPanelWidth - rightToolbarWidth} height={topToolbarHeight} />
+                <ContentWindow backgroundColor={colors.contentWindow} top={appBarHeight + topToolbarHeight} left={leftPanelWidth} width={contentWindowWidth} height={contentWindowHeight} />
+                {
+                    composePopupVisibility.visible && (
+                        <ComposePopup
+                            onClose={composePopupVisibility.handleClose}
+                            backgroundColor={colors.composePopup}
+                            top={height - composePopupHeight}
+                            left={width - rightToolbarWidth - composePopupWidth}
+                            width={composePopupWidth}
+                            height={composePopupHeight}
+                        />
+                    )
+                }
+            </div>
+        </SetupJobs>
     )
 }
 
