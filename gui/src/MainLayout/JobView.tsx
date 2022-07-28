@@ -91,6 +91,10 @@ const JobView: FunctionComponent<Props> = ({job, left, top, width, height}) => {
                         <TableCell style={{width: width1, fontWeight: 'bold'}}>Folder:</TableCell>
                         <TableCell>{job.folder || 'Default'}</TableCell>
                     </TableRow>
+                    <TableRow>
+                        <TableCell style={{width: width1, fontWeight: 'bold'}}>Created:</TableCell>
+                        <TableCell>{formatTimestamp(job.timestampCreated)}</TableCell>
+                    </TableRow>
                 </TableBody>
             </Table>
             <Button onClick={() => console.info(job)}>Print job to console</Button>
@@ -108,6 +112,13 @@ const JobView: FunctionComponent<Props> = ({job, left, top, width, height}) => {
             }
         </div>
     )
+}
+
+const formatTimestamp = (timestamp: number) => {
+    const d = new Date(timestamp)
+    const a = d.toLocaleDateString('en-US')
+    const b = d.toLocaleTimeString('en-US')
+    return `${a} ${b}`
 }
 
 export default JobView
