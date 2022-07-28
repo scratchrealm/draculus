@@ -5,3 +5,14 @@
 .JobsTableRow:hover {
     background: rgb(240, 240, 240);
 }
+
+.Table1 .MuiTableCell-root {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.Table2 .MuiTableCell-root {
+    padding: 0px
+}

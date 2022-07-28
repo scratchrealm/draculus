@@ -1,6 +1,6 @@
-import randomAlphaString from "figurl/util/randomAlphaString"
-import { FunctionComponent, useCallback } from "react"
+import { FunctionComponent, useCallback, useState } from "react"
 import ComposeBottomToolbar from "./ComposeBottomToolbar"
+import ComposeContent from "./ComposeContent"
 import ComposeTopBar from "./ComposeTopBar"
 import Job from "./Job"
 import { useJobs } from "./JobsContext"
@@ -18,29 +18,32 @@ const bottomToolbarHeight = 60
 const topBarHeight = 40
 
 const ComposePopup: FunctionComponent<Props> = ({onClose, left, top, width, height, backgroundColor}) => {
+    const [newJob, setNewJob] = useState<Job | undefined>(undefined)
     const {addJob} = useJobs()
     const handleSubmit = useCallback(() => {
-        console.log('--- hs')
-        const job: Job = {
-            jobId: randomAlphaString(10),
-            functionName: 'test-function',
-            inputArguments: {param1: 1, param2: 2},
-            status: 'waiting'
-        }
-        addJob(job)
+        if (!newJob) return
+        addJob(newJob)
         onClose()
-    }, [addJob, onClose])
+    }, [addJob, newJob, onClose])
     return (
-        <div style={{left, top, width, height, position: "absolute", backgroundColor}}>
+        <div style={{left, top, width, height, position: "absolute", backgroundColor, border: 'solid 1px black'}}>
             <ComposeTopBar
                 onClose={onClose}
                 title="Create new job"
                 backgroundColor="black"
                 width={width} height={topBarHeight} left={0} top={0}
             />
+            <ComposeContent
+                left={0}
+                top={topBarHeight}
+                width={width}
+                height={height - topBarHeight - bottomToolbarHeight}
+                setNewJob={setNewJob}
+            />
             <ComposeBottomToolbar
                 onSubmit={handleSubmit}
-                backgroundColor="white"
+                backgroundColor="rgb(240, 220, 200)"
+                okayToSubmit={newJob !== undefined}
                 width={width} height={bottomToolbarHeight} left={0} top={height - bottomToolbarHeight}
             />
         </div>

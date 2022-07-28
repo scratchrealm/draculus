@@ -13,7 +13,7 @@ type Props = {
 
 const LeftPanel: FunctionComponent<Props> = ({onCompose, left, top, width, height, backgroundColor}) => {
     return (
-        <div style={{left, top, width, height, position: "absolute", backgroundColor}}>
+        <div style={{left, top, width, height, position: "absolute", backgroundColor, borderTop: 'solid 1px gray'}}>
             <div style={{paddingLeft: 10, paddingTop: 10}}>
                 <Button variant="contained" onClick={onCompose}><Edit />&nbsp;&nbsp;Create job</Button>
             </div>

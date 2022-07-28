@@ -5,16 +5,18 @@ import { useJobs } from "./JobsContext"
 import JobsTableRow from "./JobsTableRow"
 
 type Props = {
+    left: number
+    top: number
     width: number
     height: number
     onJobClick: (job: Job) => void
 }
 
-const JobsTable: FunctionComponent<Props> = ({onJobClick, width, height}) => {
+const JobsTable: FunctionComponent<Props> = ({onJobClick, left, top, width, height}) => {
     const {jobs, selectedJobIds} = useJobs()
     const selectedJobIdsSet = useMemo(() => (new Set(selectedJobIds)), [selectedJobIds])
     return (
-        <div style={{width, height, position: "absolute", overflowY: "auto"}}>
+        <div style={{left, top, width, height, position: "absolute", overflowY: "auto"}}>
             <Table className="Table2">
                 <TableBody>
                     {

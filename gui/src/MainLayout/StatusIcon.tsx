@@ -10,15 +10,19 @@ const s = {paddingTop: 5}
 
 const StatusIcon: FunctionComponent<Props> = ({status}) => {
     return (
-        status === 'waiting' ? (
-            <AccessTime style={{...s, color: 'blue'}} />
-        ) : status === 'started' ? (
-            <Settings style={{...s, color: 'orange'}} />
-        ) : status === 'finished' ? (
-            <CheckBox style={{...s, color: 'green'}} />
-        ) : status === 'error' ? (
-            <Close style={{...s, color: 'red'}} />
-        ) : <span>Unexpected</span>
+        <span title={status}>
+            {
+                status === 'waiting' ? (
+                    <AccessTime style={{...s, color: 'blue'}} />
+                ) : status === 'started' ? (
+                    <Settings style={{...s, color: 'orange'}} />
+                ) : status === 'finished' ? (
+                    <CheckBox style={{...s, color: 'green'}} />
+                ) : status === 'error' ? (
+                    <Close style={{...s, color: 'red'}} />
+                ) : <span>Unexpected</span>
+            }
+        </span>
     )
 }
 

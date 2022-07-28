@@ -4,14 +4,15 @@ import Job from "./Job"
 
 type Props = {
     job: Job
+    left: number
+    top: number
     width: number
     height: number
 }
 
-const JobView: FunctionComponent<Props> = ({job, width, height}) => {
-    const margin = 20
+const JobView: FunctionComponent<Props> = ({job, left, top, width, height}) => {
     return (
-        <div style={{width: width - margin * 2, height: height - margin * 2, position: "absolute", overflowY: "auto", margin}}>
+        <div style={{left, top, width, height, position: "absolute", overflowY: "auto"}}>
             <Table>
                 <TableBody>
                     <TableRow>

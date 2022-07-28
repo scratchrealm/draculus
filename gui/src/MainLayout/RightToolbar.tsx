@@ -10,7 +10,7 @@ type Props = {
 
 const RightToolbar: FunctionComponent<Props> = ({left, top, width, height, backgroundColor}) => {
     return (
-        <div style={{left, top, width, height, position: "absolute", backgroundColor}}>
+        <div style={{left, top, width, height, position: "absolute", backgroundColor, borderTop: 'solid 1px gray'}}>
         </div>
     )
 }

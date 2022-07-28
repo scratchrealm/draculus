@@ -17,13 +17,14 @@ const ContentWindow: FunctionComponent<Props> = ({left, top, width, height, back
     const handleJobClick = useCallback((job: Job) => {
         setCurrentJob(job)
     }, [setCurrentJob])
+    const margin = 8
     return (
         <div style={{left, top, width, height, position: "absolute", backgroundColor}}>
             {
                 currentJob === undefined ? (
-                    <JobsTable onJobClick={handleJobClick} width={width} height={height} />
+                    <JobsTable onJobClick={handleJobClick} left={margin} top={margin} width={width - margin * 2} height={height - margin * 2} />
                 ) : (
-                    <JobView job={currentJob} width={width} height={height} />
+                    <JobView job={currentJob} left={margin} top={margin} width={width - margin * 2} height={height - margin * 2} />
                 )
             }
         </div>

@@ -32,12 +32,12 @@ const JobsTableRow: FunctionComponent<Props> = ({job, width, selected, onClick})
         onClick(job)
     }, [onClick, job])
     return (
-        <TableRow onClick={handleClick} style={{background: col}} className="JobsTableRow">
+        <TableRow style={{background: col}} className="JobsTableRow">
             <TableCell style={{width: widths[0], ...s}}><Checkbox onClick={handleClickBox} checked={selected} /></TableCell>
-            <TableCell style={{width: widths[1], ...s}}><StatusIcon status={job.status} /></TableCell>
-            <TableCell style={{width: widths[2], ...s}}>{job.functionName}</TableCell>
-            <TableCell style={{width: widths[3], ...s}}>{JSON.stringify(job.inputArguments)}</TableCell>
-            <TableCell style={{width: widths[4], ...s}}>test</TableCell>
+            <TableCell onClick={handleClick} style={{width: widths[1], ...s}}><StatusIcon status={job.status} /></TableCell>
+            <TableCell onClick={handleClick} style={{width: widths[2], ...s}}>{job.functionName}</TableCell>
+            <TableCell onClick={handleClick} style={{width: widths[3], ...s}}>{JSON.stringify(job.inputArguments)}</TableCell>
+            <TableCell onClick={handleClick} style={{width: widths[4], ...s}}>test</TableCell>
         </TableRow>
     )
 }

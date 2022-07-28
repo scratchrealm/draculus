@@ -1,4 +1,5 @@
 import { DraculusData, isDraculusData } from 'MainComponent/DraculusData';
+import { SetupFunctions } from 'MainLayout/FunctionsContext';
 import MainLayout from 'MainLayout/MainLayout';
 import { useEffect, useState } from 'react';
 import './App.css';
@@ -33,10 +34,12 @@ function App() {
   }
 
   return (
-    <MainLayout
-      width={width}
-      height={height}
-    />
+    <SetupFunctions data={data}>
+      <MainLayout
+        width={width - 1}
+        height={height - 1}
+      />
+    </SetupFunctions>
     // <MainComponent
     //   data={data}
     //   width={width - 10}  // we don't want the scrollbar to appear even when the menu is opened

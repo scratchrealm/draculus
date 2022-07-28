@@ -20,12 +20,12 @@ const rightToolbarWidth = 55
 const topToolbarHeight = 48
 
 const colors = {
-    appBar: 'green',
-    leftPanel: 'red',
-    rightToolbar: 'blue',
-    topToolbar: 'yellow',
+    appBar: 'lightgray',
+    leftPanel: 'lightgray',
+    rightToolbar: 'lightgray',
+    topToolbar: 'lightgray',
     contentWindow: '',
-    composePopup: 'magenta'
+    composePopup: 'white'
 }
 
 const MainLayout: FunctionComponent<Props> = ({width, height}) => {
@@ -48,8 +48,8 @@ const MainLayout: FunctionComponent<Props> = ({width, height}) => {
                         <ComposePopup
                             onClose={composePopupVisibility.handleClose}
                             backgroundColor={colors.composePopup}
-                            top={height - composePopupHeight}
-                            left={width - rightToolbarWidth - composePopupWidth}
+                            top={height - composePopupHeight - 15}
+                            left={width - rightToolbarWidth - composePopupWidth - 15}
                             width={composePopupWidth}
                             height={composePopupHeight}
                         />

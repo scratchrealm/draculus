@@ -8,13 +8,16 @@ type Props = {
     width: number
     height: number
     backgroundColor: string
+    okayToSubmit: boolean
 }
 
-const ComposeBottomToolbar: FunctionComponent<Props> = ({onSubmit, left, top, width, height, backgroundColor}) => {
+const ComposeBottomToolbar: FunctionComponent<Props> = ({onSubmit, left, top, width, height, backgroundColor, okayToSubmit}) => {
+    const submitBackgroundColor = okayToSubmit ? 'blue' : 'lightgray'
+    const submitColor = okayToSubmit ? 'white' : 'black'
     return (
         <div style={{left, top, width, height, position: "absolute", backgroundColor}}>
             <div style={{position: 'absolute', left: 10, top: 10}}>
-                <Button onClick={onSubmit} variant="contained" style={{backgroundColor: 'blue', color: 'white'}}>Submit</Button>
+                <Button onClick={onSubmit} variant="contained" disabled={!okayToSubmit} style={{backgroundColor: submitBackgroundColor, color: submitColor}}>Submit</Button>
             </div>
         </div>
     )
