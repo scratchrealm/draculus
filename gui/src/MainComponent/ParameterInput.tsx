@@ -21,10 +21,8 @@ const ParameterInput: FunctionComponent<Props> = ({parameter, value, onChange}) 
 
     useEffect(() => {
         if (internalValue === undefined) return
-        console.log('---- testa', internalValue, parameter.dtype)
         let val: any
         try {
-            console.log('---- testb', internalValue)
             if (parameter.dtype === 'float') {
                 val = parseFloat(internalValue)
                 if (isNaN(val)) {
@@ -42,7 +40,6 @@ const ParameterInput: FunctionComponent<Props> = ({parameter, value, onChange}) 
                 }
             }
             else if (parameter.dtype === 'str') {
-                console.log('---- testc', internalValue)
                 val = internalValue
             }
             else {
@@ -55,7 +52,6 @@ const ParameterInput: FunctionComponent<Props> = ({parameter, value, onChange}) 
             setOkay(false)
             return
         }
-        console.log('---- onchange', internalValue, val)
         onChange(parameter, val)
         setOkay(true)
     }, [internalValue, parameter, onChange])
@@ -64,7 +60,7 @@ const ParameterInput: FunctionComponent<Props> = ({parameter, value, onChange}) 
         return (
             <div>
                 <div style={{float: 'left'}}>
-                    <input type="text" value={internalValue} style={{width: 100}} onChange={handleChange} />
+                    <input type="text" value={internalValue || ''} style={{width: 100}} onChange={handleChange} />
                 </div>
                 <div style={{float: 'right'}}>
                     {

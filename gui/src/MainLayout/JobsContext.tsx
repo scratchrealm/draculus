@@ -7,36 +7,46 @@ type JobsState = {
     jobs?: Job[]
     selectedJobIds?: string[]
     currentJobId?: string
+    currentFolder?: string
 }
 
 const isJobsState = (x: any): x is JobsState => {
     return validateObject(x, {
         jobs: optional(isArrayOf(isJob)),
         selectedJobIds: optional(isArrayOf(isString)),
-        currentJobId: optional(isString)
+        currentJobId: optional(isString),
+        currentFolder: optional(isString)
     })
 }
 
 type JobsAction = {
-    type: 'addJob',
+    type: 'addJob'
     job: Job
 } | {
-    type: 'setSelectedJobIds',
+    type: 'setSelectedJobIds'
     jobIds: string[]
 } | {
-    type: 'selectJob',
+    type: 'selectJob'
     jobId: string
     selected: boolean
 } | {
-    type: 'setCurrentJobId',
+    type: 'setCurrentJobId'
     jobId: string | undefined
 } | {
-    type: 'deleteJobs',
+    type: 'deleteJobs'
     jobIds: string[]
 } | {
-    type: 'setJobStatus',
-    jobId: string,
+    type: 'setJobStatus'
+    jobId: string
     status: JobStatus
+    error?: string
+} | {
+    type: 'setCurrentFolder'
+    folder?: string
+} | {
+    type: 'moveJobsToFolder'
+    jobIds: string[]
+    folder: string
 }
 
 const jobsReducer = (s: JobsState, a: JobsAction): JobsState => {
@@ -84,7 +94,20 @@ const jobsReducer = (s: JobsState, a: JobsAction): JobsState => {
     else if (a.type === 'setJobStatus') {
         return {
             ...s,
-            jobs: (s.jobs || []).map(job => (job.jobId === a.jobId ? {...job, status: a.status} : job))
+            jobs: (s.jobs || []).map(job => (job.jobId === a.jobId ? {...job, status: a.status, error: a.error} : job))
+        }
+    }
+    else if (a.type === 'setCurrentFolder') {
+        return {
+            ...s,
+            currentFolder: a.folder
+        }
+    }
+    else if (a.type === 'moveJobsToFolder') {
+        const idSet = new Set(a.jobIds)
+        return {
+            ...s,
+            jobs: (s.jobs || []).map(job => (idSet.has(job.jobId) ? {...job, folder: a.folder} : job))
         }
     }
     else return s
@@ -104,16 +127,17 @@ export const useJobs = () => {
 
     const addJob = useCallback((job: Job) => {
         initiateTask({
-            taskName: job.functionName,
+            taskName: job.function.name,
             taskInput: job.inputArguments,
             taskType: 'calculation',
             onStatusChanged: () => {}
         }).then(task => {
             if (task) {
                 job.taskJobId = task.taskJobId
+                job.returnValueUrl = task.resultUrl
                 jobsDispatch && jobsDispatch({type: 'addJob', job})
                 const updateStatus = () => {
-                    jobsDispatch && jobsDispatch({type: 'setJobStatus', jobId: job.jobId, status: task.status})
+                    jobsDispatch && jobsDispatch({type: 'setJobStatus', jobId: job.jobId, status: task.status, error: task.errorMessage})
                 }
                 task.onStatusChanged(updateStatus)
                 updateStatus()
@@ -137,15 +161,65 @@ export const useJobs = () => {
         jobsDispatch && jobsDispatch({type: 'deleteJobs', jobIds})
     }, [jobsDispatch])
 
+    const setJobStatus = useCallback((jobId: string, status: JobStatus) => {
+        jobsDispatch && jobsDispatch({type: 'setJobStatus', jobId, status})
+    }, [jobsDispatch])
+
+    const moveJobsToFolder = useCallback((jobIds: string[], folder: string) => {
+        jobsDispatch && jobsDispatch({type: 'moveJobsToFolder', jobIds, folder})
+    }, [jobsDispatch])
+
+    const setCurrentFolder = useCallback((folder?: string) => {
+        jobsDispatch && jobsDispatch({type: 'setCurrentFolder', folder})
+        const {selectedJobIds} = jobsState
+        if (selectedJobIds) {
+            const jobsById: {[key: string]: Job} = {}
+            for (let job of jobsState.jobs || []) {
+                jobsById[job.jobId] = job
+            }
+            const newSelectedJobIds = selectedJobIds.filter(jobId => (
+                (jobsById[jobId].folder || 'Default') === (folder || 'Default')
+            ))
+            setSelectedJobIds(newSelectedJobIds)
+        }
+    }, [jobsDispatch, jobsState, setSelectedJobIds])
+
+    const folders: string[] = useMemo(() => {
+        const ret: string[] = []
+        ret.push('Default')
+        ret.push('Archive')
+        const allFolders = (jobsState.jobs || []).map(job => (job.folder)).filter(folder => (folder !== undefined)) as string[]
+        const allFoldersUnique = [...new Set(allFolders)].sort().filter(f => (!['Archive', 'Default'].includes(f)))
+        for (let folder of allFoldersUnique) {
+            ret.push(folder)
+        }
+        return ret
+    }, [jobsState.jobs])
+
+    const jobs = useMemo(() => (
+        (jobsState.jobs || emptyJobsList).filter(job => (
+            (job.folder || 'Default') === (jobsState.currentFolder || 'Default')
+        ))
+    ), [jobsState.jobs, jobsState.currentFolder])
+
+    const jobsSorted = useMemo(() => (
+        (jobs.sort((a, b) => (b.timestampCreated - a.timestampCreated)))
+    ), [jobs])
+
     return {
-        jobs: jobsState.jobs || emptyJobsList,
+        jobs: jobsSorted,
         selectedJobIds: jobsState.selectedJobIds || [],
         currentJob: (jobsState.jobs || []).filter(job => (job.jobId === jobsState.currentJobId))[0],
+        folders,
+        currentFolder: jobsState.currentFolder,
         selectJob,
         setSelectedJobIds,
         addJob,
         setCurrentJob,
-        deleteJobs
+        deleteJobs,
+        setJobStatus,
+        setCurrentFolder,
+        moveJobsToFolder
     }
 }
 

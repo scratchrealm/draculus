@@ -81,6 +81,8 @@ const startListeningToParent = () => {
             }
         }
         else {
+            if ((e.data.type) && (typeof(e.data.type) === 'string') && (e.data.type.startsWith('webpack'))) return
+            if ((e.data) && (typeof(e.data) === 'string') && (e.data.startsWith('webpack'))) return
             console.warn('Unhandled message from parent', e)
         }
     })

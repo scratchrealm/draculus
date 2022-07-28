@@ -10,9 +10,14 @@ export class Task<ReturnType> {
     #status: TaskJobStatus
     #errorMessage?: string = undefined
     #result: ReturnType | undefined = undefined
-    constructor(a: {taskJobId: string, status: TaskJobStatus}) {
+    #resultUrl: string | undefined = undefined
+    constructor(a: {taskJobId: string, status: TaskJobStatus, returnValue?: any, returnValueUrl?: string}) {
         this.#taskJobId = a.taskJobId
         this.#status = a.status
+        if (this.#status === 'finished') {
+            this.#result = a.returnValue as any as ReturnType
+        }
+        this.#resultUrl = a.returnValueUrl
     }
     onStatusChanged(cb: () => void) {
         this.#onStatusChangedCallbacks.push(cb)
@@ -28,6 +33,9 @@ export class Task<ReturnType> {
     }
     public get result() {
         return this.#result
+    }
+    public get resultUrl() {
+        return this.#resultUrl
     }
     _handleStatusChange(status: TaskJobStatus, o: {errorMessage?: string, returnValue?: any}) {
         if (status === this.#status) return
@@ -55,14 +63,14 @@ const initiateTask = async <ReturnType>(args: {taskName: string | undefined, tas
     const resp = await sendRequestToParent(req)
     if (!isInitiateTaskResponse(resp)) throw Error('Unexpected response to initiateTask')
 
-    const {taskJobId, status} = resp
+    const {taskJobId, status, returnValue, returnValueUrl} = resp
 
     let t: Task<ReturnType>
     if (taskJobId.toString() in allTasks) {
         t = allTasks[taskJobId.toString()]
     }
     else {
-        t = new Task<ReturnType>({taskJobId, status})
+        t = new Task<ReturnType>({taskJobId, status, returnValue, returnValueUrl})
         allTasks[taskJobId.toString()] = t
     }
     t.onStatusChanged(onStatusChanged)

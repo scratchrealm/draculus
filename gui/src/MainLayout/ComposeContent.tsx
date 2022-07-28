@@ -6,6 +6,7 @@ import ParameterInput from "MainComponent/ParameterInput"
 import { FunctionComponent, useCallback, useEffect, useReducer, useState } from "react"
 import { useFunctions } from "./FunctionsContext"
 import Job from "./Job"
+import { useJobs } from "./JobsContext"
 
 type Props = {
     left: number
@@ -38,6 +39,7 @@ const parameterValuesReducer = (s: {[name: string]: any}, a: ParameterValuesActi
 }
 
 const ComposeContent: FunctionComponent<Props> = ({left, top, width, height, setNewJob}) => {
+    const {currentJob} = useJobs()
     const [selectedFunction, setSelectedFunction] = useState<DrFunction | undefined>()
     const {functions} = useFunctions()
     const [parameterValues, parameterValuesDispatch] = useReducer(parameterValuesReducer, {})
@@ -54,6 +56,12 @@ const ComposeContent: FunctionComponent<Props> = ({left, top, width, height, set
         parameterValuesDispatch({type: 'setParameterValues', parameterValues: {}})
     }, [selectedFunction])
     useEffect(() => {
+        if (currentJob !== undefined) {
+            setSelectedFunction(currentJob.function)
+            parameterValuesDispatch({type: 'setParameterValues', parameterValues: currentJob.inputArguments})
+        }
+    }, [currentJob])
+    useEffect(() => {
         if (!selectedFunction) {
             setNewJob(undefined)
             return
@@ -66,9 +74,10 @@ const ComposeContent: FunctionComponent<Props> = ({left, top, width, height, set
         }
         const job: Job = {
             jobId: randomAlphaString(10),
-            functionName: selectedFunction.name,
+            function: {...selectedFunction},
             inputArguments: parameterValues,
-            status: 'waiting'
+            status: 'waiting',
+            timestampCreated: Date.now()
         }
         setNewJob(job)
     }, [parameterValues, selectedFunction, setNewJob])

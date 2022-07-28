@@ -32,8 +32,8 @@ const NdArrayDisplay: FunctionComponent<Props> = ({array}) => {
 
 const getOutputString1D = (array: number[]) => {
     let outputString: string = array.join(', ')
-    if (outputString.length > 150) {
-        outputString = outputString.slice(0, 151)
+    if (outputString.length > 20000) {
+        outputString = outputString.slice(0, 20001)
         const ind = outputString.lastIndexOf(',')
         if (ind >= 0) outputString = outputString.slice(0, ind)
         outputString += ', ...'

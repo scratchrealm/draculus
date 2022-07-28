@@ -21,7 +21,7 @@ const JobsTable: FunctionComponent<Props> = ({onJobClick, left, top, width, heig
                 <TableBody>
                     {
                         jobs.map(job => (
-                            <JobsTableRow onClick={onJobClick} job={job} width={width} selected={selectedJobIdsSet.has(job.jobId)} />
+                            <JobsTableRow key={job.jobId} onClick={onJobClick} job={job} width={width} selected={selectedJobIdsSet.has(job.jobId)} />
                         ))
                     }
                 </TableBody>

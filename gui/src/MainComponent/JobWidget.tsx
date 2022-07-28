@@ -12,7 +12,6 @@ type Props = {
 }
 
 const JobWidget: FunctionComponent<Props> = ({job, onTaskStatusChange, onCancel}) => {
-    console.log('----- x', job.parameterValues)
     const {returnValue, task, taskStatus} = useCalculationTask<any>(job.function.name, job.parameterValues)
     useEffect(() => {
         onTaskStatusChange(job, task, taskStatus)

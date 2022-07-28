@@ -146,6 +146,7 @@ export const isJSONSerializable = (obj: any): boolean => {
 
 const validateObject = (x: any, spec: ValidateObjectSpec, opts?: {callback?: (x: string) => any, allowAdditionalFields?: boolean}): boolean => {
     const o = opts || {}
+    // o.callback = o.callback || (x => {console.warn(x)})
     if (!x) {
         o.callback && o.callback('x is undefined/null.')
         return false;
@@ -166,7 +167,7 @@ const validateObject = (x: any, spec: ValidateObjectSpec, opts?: {callback?: (x:
         const specK = spec[k];
         if (isFunction(specK)) {
             if (!specK(x[k])) {
-                o.callback && o.callback(`Problem validating: ${k}`)
+                o.callback && o.callback(`Problem validating: ${k} (${x[k]})`)
                 return false;
             }
         }

@@ -14,6 +14,21 @@ export type DrFunction = {
     name: string
     parameters: DrFunctionParameter[]
     output: DrFunctionOutput
+    projectId: string
+}
+
+export const isDrFunction = (x: any): x is DrFunction => {
+    return validateObject(x, {
+        name: isString,
+        parameters: isArrayOf(z => (validateObject(z, {
+            name: isString,
+            dtype: isString
+        }))),
+        output: z => (validateObject(z, {
+            dtype: isString
+        })),
+        projectId: isString
+    })
 }
 
 export type DraculusData = {
@@ -23,15 +38,6 @@ export type DraculusData = {
 export const isDraculusData = (x: any): x is DraculusData => {
     return validateObject(x, {
         type: isEqualTo('Draculus'),
-        functions: isArrayOf(y => (validateObject(y, {
-            name: isString,
-            parameters: isArrayOf(z => (validateObject(z, {
-                name: isString,
-                dtype: isString
-            }))),
-            output: z => (validateObject(z, {
-                dtype: isString
-            }))
-        })))
+        functions: isArrayOf(isDrFunction)
     })
 }

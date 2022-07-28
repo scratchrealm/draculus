@@ -1,4 +1,4 @@
-import { AccessTime, CheckBox, Close, Settings } from "@material-ui/icons";
+import { AccessTime, Close, Done, Settings } from "@material-ui/icons";
 import { FunctionComponent } from "react";
 import { JobStatus } from "./Job";
 
@@ -17,7 +17,7 @@ const StatusIcon: FunctionComponent<Props> = ({status}) => {
                 ) : status === 'started' ? (
                     <Settings style={{...s, color: 'orange'}} />
                 ) : status === 'finished' ? (
-                    <CheckBox style={{...s, color: 'green'}} />
+                    <Done style={{...s, color: 'green'}} />
                 ) : status === 'error' ? (
                     <Close style={{...s, color: 'red'}} />
                 ) : <span>Unexpected</span>
