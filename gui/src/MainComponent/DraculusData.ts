@@ -1,5 +1,5 @@
 import { validateObject } from '../figurl';
-import { isArrayOf, isEqualTo, isString } from '../figurl/viewInterface/validateObject';
+import { isArrayOf, isEqualTo, isString, optional } from '../figurl/viewInterface/validateObject';
 
 export type DrFunctionParameter = {
     name: string
@@ -32,12 +32,14 @@ export const isDrFunction = (x: any): x is DrFunction => {
 }
 
 export type DraculusData = {
-    type: 'Draculus',
+    type: 'Draculus'
     functions: DrFunction[]
+    markdown?: string
 }
 export const isDraculusData = (x: any): x is DraculusData => {
     return validateObject(x, {
         type: isEqualTo('Draculus'),
-        functions: isArrayOf(isDrFunction)
+        functions: isArrayOf(isDrFunction),
+        markdown: optional(isString)
     })
 }

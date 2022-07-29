@@ -254,7 +254,7 @@ export const useJobs = () => {
     return {
         jobs: jobsSorted,
         selectedJobIds: jobsState.selectedJobIds || [],
-        currentJob: (jobsState.jobs || []).filter(job => (job.jobId === jobsState.currentJobId))[0],
+        currentJob: (jobsState.jobs || []).filter(job => (job.jobId === jobsState.currentJobId))[0] as (Job | undefined),
         folders,
         currentFolder: jobsState.currentFolder,
         selectJob,

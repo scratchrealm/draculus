@@ -16,9 +16,10 @@ type Props = {
     width: number
     height: number
     onCreateNewJobBasedOnCurrent: () => void
+    composing: boolean
 }
 
-const JobView: FunctionComponent<Props> = ({job, left, top, width, height, onCreateNewJobBasedOnCurrent}) => {
+const JobView: FunctionComponent<Props> = ({job, left, top, width, height, onCreateNewJobBasedOnCurrent, composing}) => {
     const {setJobStatus, restartJob} = useJobs()
     const [returnValue, setReturnValue] = useState<any | undefined>(undefined)
     const [checkingForOutput, setCheckingForOutput] = useState<boolean>(false)
@@ -114,7 +115,7 @@ const JobView: FunctionComponent<Props> = ({job, left, top, width, height, onCre
                     </TableRow>
                 </TableBody>
             </Table>
-            <IconButton onClick={onCreateNewJobBasedOnCurrent} title="Create a new job based on this one"><FileCopy /></IconButton>
+            <IconButton onClick={onCreateNewJobBasedOnCurrent} disabled={composing} title="Create a new job based on this one"><FileCopy /></IconButton>
             <IconButton onClick={() => console.info(job)} title="Print job to browser dev console"><Adb /></IconButton>            
             <hr/ >
             {

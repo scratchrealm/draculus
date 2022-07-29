@@ -12,12 +12,13 @@ type Props = {
     width: number
     height: number
     backgroundColor: string
+    onHelp: () => void
 }
 
 const bottomToolbarHeight = 60
 const topBarHeight = 40
 
-const ComposePopup: FunctionComponent<Props> = ({onClose, left, top, width, height, backgroundColor}) => {
+const ComposePopup: FunctionComponent<Props> = ({onClose, left, top, width, height, backgroundColor, onHelp}) => {
     const [newJob, setNewJob] = useState<Job | undefined>(undefined)
     const {addJob, setCurrentJob, setCurrentFolder} = useJobs()
     const handleSubmit = useCallback(() => {
@@ -41,6 +42,7 @@ const ComposePopup: FunctionComponent<Props> = ({onClose, left, top, width, heig
                 width={width}
                 height={height - topBarHeight - bottomToolbarHeight}
                 setNewJob={setNewJob}
+                onHelp={onHelp}
             />
             <ComposeBottomToolbar
                 onSubmit={handleSubmit}

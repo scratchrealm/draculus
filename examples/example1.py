@@ -58,12 +58,21 @@ Example text
 '''
 
 if __name__ == '__main__':
-    X = dr.Draculus()
+    X = dr.Draculus(
+        markdown='''
+# These are some test functions
+
+* test_sum - add two numbers
+* test_array - create an example array of numbers
+* test_array_2 - create an example 2D array
+* test_markdown - example with markdown output
+'''
+    )
     X.add_function(test_sum)
     X.add_function(test_array)
     X.add_function(test_array_2d)
     X.add_function(test_markdown)
-    X.start(label='test')
+    X.start(label='test', hide_app_bar=True)
 
     # This is a live backend
     # Keep this running in a terminal

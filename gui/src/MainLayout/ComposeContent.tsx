@@ -1,4 +1,4 @@
-import { Table, TableBody, TableCell, TableRow } from "@material-ui/core"
+import { Button, Table, TableBody, TableCell, TableRow } from "@material-ui/core"
 import randomAlphaString from "figurl/util/randomAlphaString"
 import { DrFunction, DrFunctionParameter } from "MainComponent/DraculusData"
 import FunctionSelectControl from "MainComponent/FunctionSelectControl"
@@ -14,6 +14,7 @@ type Props = {
     width: number
     height: number
     setNewJob: (job: Job | undefined) => void
+    onHelp: () => void
 }
 
 type ParameterValuesAction = {
@@ -38,10 +39,10 @@ const parameterValuesReducer = (s: {[name: string]: any}, a: ParameterValuesActi
     else return s
 }
 
-const ComposeContent: FunctionComponent<Props> = ({left, top, width, height, setNewJob}) => {
+const ComposeContent: FunctionComponent<Props> = ({left, top, width, height, setNewJob, onHelp}) => {
     const {currentJob} = useJobs()
     const [selectedFunction, setSelectedFunction] = useState<DrFunction | undefined>()
-    const {functions} = useFunctions()
+    const {functions, markdown} = useFunctions()
     const [parameterValues, parameterValuesDispatch] = useReducer(parameterValuesReducer, {})
     const margin = 5
     const handleParameterValueChange = useCallback((p: DrFunctionParameter, value: any) => {
@@ -56,11 +57,11 @@ const ComposeContent: FunctionComponent<Props> = ({left, top, width, height, set
         parameterValuesDispatch({type: 'setParameterValues', parameterValues: {}})
     }, [selectedFunction])
     useEffect(() => {
-        if (currentJob !== undefined) {
+        if ((currentJob !== undefined) && (selectedFunction === undefined)) {
             setSelectedFunction(currentJob.function)
             parameterValuesDispatch({type: 'setParameterValues', parameterValues: currentJob.inputArguments})
         }
-    }, [currentJob])
+    }, [currentJob, selectedFunction])
     useEffect(() => {
         if (!selectedFunction) {
             setNewJob(undefined)
@@ -83,12 +84,19 @@ const ComposeContent: FunctionComponent<Props> = ({left, top, width, height, set
     }, [parameterValues, selectedFunction, setNewJob])
     return (
         <div style={{left: left + margin, top: top + margin, width: width - margin * 2, height: height - margin * 2, position: "absolute", overflowY: 'auto'}}>
-            Select function:
-            <FunctionSelectControl
-                functions={functions || []}
-                selectedFunction={selectedFunction}
-                onChange={setSelectedFunction}
-            />
+            {
+                markdown && (
+                    <Button onClick={onHelp}>Show help</Button>
+                )
+            }
+            <div>
+                Select function:
+                <FunctionSelectControl
+                    functions={functions || []}
+                    selectedFunction={selectedFunction}
+                    onChange={setSelectedFunction}
+                />
+            </div>
             <div>&nbsp;</div><hr />
             {
                 selectedFunction && (

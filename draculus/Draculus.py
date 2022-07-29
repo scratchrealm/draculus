@@ -38,11 +38,12 @@ class DrFunction:
         }
 
 class Draculus:
-    def __init__(self, *, project_id: Union[str, None]=None) -> None:
+    def __init__(self, *, markdown: Union[str, None], project_id: Union[str, None]=None) -> None:
         self._functions: List[DrFunction] = []
         if project_id is None:
             project_id = kcl.get_project_id()
         self._project_id = project_id
+        self._markdown = markdown
     def add_function(self, f: Callable):
         name = getattr(f, '_draculus_name', None)
         parameters = getattr(f, '_draculus_parameters', None)
@@ -54,11 +55,14 @@ class Draculus:
             DrFunction(f=f, name=name, parameters=parameters, output=output, project_id=self._project_id)
         )
     def to_dict(self):
-        return {
+        ret = {
             'type': 'Draculus',
             'functions': [F.to_dict() for F in self._functions]
         }
-    def start(self, *, label: str):
+        if self._markdown is not None:
+            ret['markdown'] = self._markdown
+        return ret
+    def start(self, *, label: str, hide_app_bar: bool=False):
         data = self.to_dict()
         F = fig.Figure(
             view_url='gs://figurl/draculus-1',
@@ -66,7 +70,7 @@ class Draculus:
         )
         print('')
         print('======================================================')
-        print(F.url(label=label, project_id=self._project_id))
+        print(F.url(label=label, project_id=self._project_id, hide_app_bar=hide_app_bar)) # requires figurl>=0.2.8
         print('======================================================')
         print('')
         print('This is a live backend. Keep this running in a terminal. Tasks will run on this machine.')

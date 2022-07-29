@@ -9,6 +9,7 @@ import TopToolbar from "./TopToolbar"
 import useVisibility from "./useVisibility"
 import './MainLayout.css'
 import ContentTitleBar from "./ContentTitleBar"
+import FunctionsHelpPopup from "./FunctionsHelpPopup"
 
 type Props = {
     width: number
@@ -34,10 +35,11 @@ const colors = {
 const MainLayout: FunctionComponent<Props> = ({width, height}) => {
     const contentWindowWidth = width - leftPanelWidth - rightToolbarWidth
     const contentWindowHeight = height - appBarHeight - topToolbarHeight - contentTitleBarHeight
-    const a = Math.min(contentWindowHeight - 300, contentWindowWidth - 300)
+    const a = Math.min(height - 200, contentWindowWidth - 300)
     const composePopupWidth = Math.min(Math.max(a, 400), 1000)
     const composePopupHeight = composePopupWidth
     const composePopupVisibility = useVisibility()
+    const functionsHelpVisibility = useVisibility()
     const handleCreateNewJobBasedOnCurrent = useCallback(() => {
         composePopupVisibility.handleOpen()
     }, [composePopupVisibility])
@@ -49,7 +51,7 @@ const MainLayout: FunctionComponent<Props> = ({width, height}) => {
                 <RightToolbar backgroundColor={colors.rightToolbar} top={appBarHeight} left={width - rightToolbarWidth} width={rightToolbarWidth} height={height - appBarHeight} />
                 <TopToolbar backgroundColor={colors.topToolbar} top={appBarHeight} left={leftPanelWidth} width={width - leftPanelWidth - rightToolbarWidth} height={topToolbarHeight} />
                 <ContentTitleBar backgroundColor={colors.contentTitleBar} top={appBarHeight + topToolbarHeight} left={leftPanelWidth} width={width - leftPanelWidth - rightToolbarWidth} height={contentTitleBarHeight} />
-                <ContentWindow backgroundColor={colors.contentWindow} top={appBarHeight + topToolbarHeight + contentTitleBarHeight} left={leftPanelWidth} width={contentWindowWidth} height={contentWindowHeight} onCreateNewJobBasedOnCurrent={handleCreateNewJobBasedOnCurrent} />
+                <ContentWindow backgroundColor={colors.contentWindow} top={appBarHeight + topToolbarHeight + contentTitleBarHeight} left={leftPanelWidth} width={contentWindowWidth} height={contentWindowHeight} onCreateNewJobBasedOnCurrent={handleCreateNewJobBasedOnCurrent} composing={composePopupVisibility.visible} />
                 {
                     composePopupVisibility.visible && (
                         <ComposePopup
@@ -58,6 +60,19 @@ const MainLayout: FunctionComponent<Props> = ({width, height}) => {
                             top={height - composePopupHeight - 15}
                             left={width - rightToolbarWidth - composePopupWidth - 15}
                             width={composePopupWidth}
+                            height={composePopupHeight}
+                            onHelp={functionsHelpVisibility.handleOpen}
+                        />
+                    )
+                }
+                {
+                    functionsHelpVisibility.visible && (
+                        <FunctionsHelpPopup
+                            onClose={functionsHelpVisibility.handleClose}
+                            backgroundColor={colors.composePopup}
+                            top={height - composePopupHeight - 15}
+                            left={15}
+                            width={width - rightToolbarWidth - composePopupWidth - 45}
                             height={composePopupHeight}
                         />
                     )
