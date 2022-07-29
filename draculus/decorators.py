@@ -1,5 +1,5 @@
 import functools
-from typing import List
+from typing import Any, List, Union
 from .Draculus import DrFunctionOutput, DrFunctionParameter
 
 
@@ -9,12 +9,12 @@ def function(name: str):
         return func
     return decorator
 
-def parameter(name: str, *, dtype: str):
+def parameter(name: str, *, dtype: str, default: Union[Any, None]=None):
     def decorator(func):
         parameters: List[DrFunctionParameter] = getattr(func, '_draculus_parameters', [])
         parameters.insert(
             0,
-            DrFunctionParameter(name=name, dtype=dtype)
+            DrFunctionParameter(name=name, dtype=dtype, default=default)
         )
         setattr(func, '_draculus_parameters', parameters)
         return func

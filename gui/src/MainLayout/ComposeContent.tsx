@@ -53,6 +53,32 @@ const ComposeContent: FunctionComponent<Props> = ({left, top, width, height, set
         })
     }, [])
     useEffect(() => {
+        // select first function
+        if (selectedFunction === undefined) {
+            if ((functions?.length || 0) > 0) {
+                setSelectedFunction((functions || [])[0])
+            }
+        }
+    }, [selectedFunction, functions])
+    useEffect(() => {
+        // set default parameters
+        if (selectedFunction !== undefined) {
+            const newParameterValues = {...parameterValues}
+            let somethingSet = false
+            for (let p of selectedFunction.parameters) {
+                if (p.default !== undefined) {
+                    if (parameterValues[p.name] === undefined) {
+                        newParameterValues[p.name] = p.default
+                        somethingSet = true
+                    }
+                }
+            }
+            if (somethingSet) {
+                parameterValuesDispatch({type: 'setParameterValues', parameterValues: newParameterValues})
+            }
+        }
+    }, [parameterValues, selectedFunction])
+    useEffect(() => {
         // important to reset when new function is selected!
         parameterValuesDispatch({type: 'setParameterValues', parameterValues: {}})
     }, [selectedFunction])

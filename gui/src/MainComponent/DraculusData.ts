@@ -4,6 +4,7 @@ import { isArrayOf, isEqualTo, isString, optional } from '../figurl/viewInterfac
 export type DrFunctionParameter = {
     name: string
     dtype: string
+    default?: any
 }
 
 export type DrFunctionOutput = {
@@ -22,7 +23,8 @@ export const isDrFunction = (x: any): x is DrFunction => {
         name: isString,
         parameters: isArrayOf(z => (validateObject(z, {
             name: isString,
-            dtype: isString
+            dtype: isString,
+            default: optional(() => (true))
         }))),
         output: z => (validateObject(z, {
             dtype: isString

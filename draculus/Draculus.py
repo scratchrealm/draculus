@@ -1,18 +1,22 @@
-from typing import Callable, List, Union
+from typing import Any, Callable, List, Union
 import kachery_cloud as kcl
 import figurl as fig
 from kachery_cloud.TaskBackend import TaskBackend
 
 
 class DrFunctionParameter:
-    def __init__(self, *, name: str, dtype: str) -> None:
+    def __init__(self, *, name: str, dtype: str, default: Union[Any, None]=None) -> None:
         self.name = name
         self.dtype = dtype
+        self.default = default
     def to_dict(self):
-        return {
+        ret = {
             'name': self.name,
             'dtype': self.dtype
         }
+        if self.default is not None:
+            ret['default'] = self.default
+        return ret
 
 class DrFunctionOutput:
     def __init__(self, *, dtype: str) -> None:

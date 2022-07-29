@@ -1,6 +1,3 @@
-# 7/27/22
-# https://figurl.org/f?v=gs://figurl/draculus-1&d=sha1://42defb5566d5c999d82ab78f5fb697e808b90e9e&project=lqhzprbdrq&label=test
-
 import numpy as np
 import draculus as dr
 
