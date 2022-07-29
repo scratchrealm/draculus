@@ -47,9 +47,9 @@ const MainLayout: FunctionComponent<Props> = ({width, height}) => {
                 <AppBar backgroundColor={colors.appBar} top={0} left={0} width={width} height={appBarHeight} />
                 <LeftPanel onCompose={composePopupVisibility.handleOpen} backgroundColor={colors.leftPanel} top={appBarHeight} left={0} width={leftPanelWidth} height={height - appBarHeight} />
                 <RightToolbar backgroundColor={colors.rightToolbar} top={appBarHeight} left={width - rightToolbarWidth} width={rightToolbarWidth} height={height - appBarHeight} />
-                <TopToolbar backgroundColor={colors.topToolbar} top={appBarHeight} left={leftPanelWidth} width={width - leftPanelWidth - rightToolbarWidth} height={topToolbarHeight} onCreateNewJobBasedOnCurrent={handleCreateNewJobBasedOnCurrent} />
+                <TopToolbar backgroundColor={colors.topToolbar} top={appBarHeight} left={leftPanelWidth} width={width - leftPanelWidth - rightToolbarWidth} height={topToolbarHeight} />
                 <ContentTitleBar backgroundColor={colors.contentTitleBar} top={appBarHeight + topToolbarHeight} left={leftPanelWidth} width={width - leftPanelWidth - rightToolbarWidth} height={contentTitleBarHeight} />
-                <ContentWindow backgroundColor={colors.contentWindow} top={appBarHeight + topToolbarHeight + contentTitleBarHeight} left={leftPanelWidth} width={contentWindowWidth} height={contentWindowHeight} />
+                <ContentWindow backgroundColor={colors.contentWindow} top={appBarHeight + topToolbarHeight + contentTitleBarHeight} left={leftPanelWidth} width={contentWindowWidth} height={contentWindowHeight} onCreateNewJobBasedOnCurrent={handleCreateNewJobBasedOnCurrent} />
                 {
                     composePopupVisibility.visible && (
                         <ComposePopup

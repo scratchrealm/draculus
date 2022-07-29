@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import { getFigureData, useWindowDimensions } from './figurl';
 
+const urlSearchParams = new URLSearchParams(window.location.search)
+const queryParams = Object.fromEntries(urlSearchParams.entries())
 
 function App() {
   let [data, setData] = useState<DraculusData>()
@@ -24,6 +26,15 @@ function App() {
       console.error(`Error getting figure data`, err)
     })
   }, [])
+
+  if (queryParams.debug) {
+    return (
+      <MainLayout
+        width={width - 1}
+        height={height - 1}
+      />
+    )
+  }
 
   if (errorMessage) {
     return <div style={{color: 'red'}}>{errorMessage}</div>

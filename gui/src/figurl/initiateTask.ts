@@ -11,6 +11,7 @@ export class Task<ReturnType> {
     #errorMessage?: string = undefined
     #result: ReturnType | undefined = undefined
     #resultUrl: string | undefined = undefined
+    #canceled = false
     constructor(a: {taskJobId: string, status: TaskJobStatus, returnValue?: any, returnValueUrl?: string}) {
         this.#taskJobId = a.taskJobId
         this.#status = a.status
@@ -37,7 +38,12 @@ export class Task<ReturnType> {
     public get resultUrl() {
         return this.#resultUrl
     }
+    cancel() {
+        this.#canceled = true
+        // todo: send a cancel message
+    }
     _handleStatusChange(status: TaskJobStatus, o: {errorMessage?: string, returnValue?: any}) {
+        if (this.#canceled) return
         if (status === this.#status) return
         this.#status = status
         if (status === 'error') {
@@ -87,6 +93,17 @@ export const handleTaskStatusUpdate = (msg: TaskStatusUpdateMessage) => {
 
 export const getAllTasks = () => {
     return allTasks
+}
+
+export const getTask = (taskJobId: string) => {
+    return allTasks[taskJobId]
+}
+
+export const cancelTask = (taskJobId: string) => {
+    const task = allTasks[taskJobId]
+    if (!task) return
+    task.cancel()
+    delete allTasks[taskJobId]
 }
 
 export default initiateTask

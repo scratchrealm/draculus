@@ -19,13 +19,14 @@ const topBarHeight = 40
 
 const ComposePopup: FunctionComponent<Props> = ({onClose, left, top, width, height, backgroundColor}) => {
     const [newJob, setNewJob] = useState<Job | undefined>(undefined)
-    const {addJob, setCurrentJob} = useJobs()
+    const {addJob, setCurrentJob, setCurrentFolder} = useJobs()
     const handleSubmit = useCallback(() => {
         if (!newJob) return
         addJob(newJob)
         setCurrentJob(undefined)
+        setCurrentFolder(undefined)
         onClose()
-    }, [addJob, newJob, onClose, setCurrentJob])
+    }, [addJob, newJob, onClose, setCurrentJob, setCurrentFolder])
     return (
         <div style={{left, top, width, height, position: "absolute", backgroundColor, border: 'solid 1px black'}}>
             <ComposeTopBar

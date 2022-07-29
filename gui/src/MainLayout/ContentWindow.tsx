@@ -10,9 +10,10 @@ type Props = {
     width: number
     height: number
     backgroundColor: string
+    onCreateNewJobBasedOnCurrent: () => void
 }
 
-const ContentWindow: FunctionComponent<Props> = ({left, top, width, height, backgroundColor}) => {
+const ContentWindow: FunctionComponent<Props> = ({left, top, width, height, backgroundColor, onCreateNewJobBasedOnCurrent}) => {
     const {setCurrentJob, currentJob} = useJobs()
     const handleJobClick = useCallback((job: Job) => {
         setCurrentJob(job)
@@ -24,7 +25,7 @@ const ContentWindow: FunctionComponent<Props> = ({left, top, width, height, back
                 currentJob === undefined ? (
                     <JobsTable onJobClick={handleJobClick} left={margin} top={margin} width={width - margin * 2} height={height - margin * 2} />
                 ) : (
-                    <JobView job={currentJob} left={margin} top={margin} width={width - margin * 2} height={height - margin * 2} />
+                    <JobView job={currentJob} left={margin} top={margin} width={width - margin * 2} height={height - margin * 2} onCreateNewJobBasedOnCurrent={onCreateNewJobBasedOnCurrent} />
                 )
             }
         </div>

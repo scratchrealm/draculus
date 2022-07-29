@@ -1,4 +1,5 @@
 import { initiateTask, validateObject } from "figurl"
+import { cancelTask, getTask, Task } from "figurl/initiateTask"
 import { isArrayOf, isString, optional } from "figurl/viewInterface/validateObject"
 import React, { FunctionComponent, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useReducer } from "react"
 import Job, { isJob, JobStatus } from "./Job"
@@ -8,6 +9,7 @@ type JobsState = {
     selectedJobIds?: string[]
     currentJobId?: string
     currentFolder?: string
+    jobSearchString?: string
 }
 
 const isJobsState = (x: any): x is JobsState => {
@@ -15,7 +17,8 @@ const isJobsState = (x: any): x is JobsState => {
         jobs: optional(isArrayOf(isJob)),
         selectedJobIds: optional(isArrayOf(isString)),
         currentJobId: optional(isString),
-        currentFolder: optional(isString)
+        currentFolder: optional(isString),
+        jobSearchString: optional(isString)
     })
 }
 
@@ -47,6 +50,13 @@ type JobsAction = {
     type: 'moveJobsToFolder'
     jobIds: string[]
     folder: string
+} | {
+    type: 'setJobSearchString'
+    searchString: string
+} | {
+    type: 'initializeJobWithTask'
+    jobId: string
+    task: Task<any>
 }
 
 const jobsReducer = (s: JobsState, a: JobsAction): JobsState => {
@@ -110,6 +120,19 @@ const jobsReducer = (s: JobsState, a: JobsAction): JobsState => {
             jobs: (s.jobs || []).map(job => (idSet.has(job.jobId) ? {...job, folder: a.folder} : job))
         }
     }
+    else if (a.type === 'setJobSearchString') {
+        return {
+            ...s,
+            jobSearchString: a.searchString
+        }
+    }
+    else if (a.type === 'initializeJobWithTask') {
+        const newJobs = (s.jobs || []).map(job => (job.jobId === a.jobId ? {...job, taskJobId: a.task.taskJobId, returnValueUrl: a.task.resultUrl} : job))
+        return {
+            ...s,
+            jobs: newJobs
+        }
+    }
     else return s
 }
 
@@ -125,25 +148,39 @@ export const useJobs = () => {
     const c = useContext(JobsContext)
     const {jobsState, jobsDispatch} = c
 
-    const addJob = useCallback((job: Job) => {
-        initiateTask({
-            taskName: job.function.name,
-            taskInput: job.inputArguments,
-            taskType: 'calculation',
-            onStatusChanged: () => {}
-        }).then(task => {
+    const restartJob = useCallback((job: Job) => {
+        if (job.taskJobId) {
+            const task0 = getTask(job.taskJobId)
+            if (task0) {
+                // task is already created
+                if (task0.status === 'error') {
+                    cancelTask(task0.taskJobId)
+                }
+                else return
+            }
+        }
+        ;(async () => {
+            const task = await initiateTask({
+                taskName: job.function.name,
+                taskInput: job.inputArguments,
+                taskType: 'calculation',
+                onStatusChanged: () => {}
+            })
             if (task) {
-                job.taskJobId = task.taskJobId
-                job.returnValueUrl = task.resultUrl
-                jobsDispatch && jobsDispatch({type: 'addJob', job})
+                jobsDispatch && jobsDispatch({type: 'initializeJobWithTask', jobId: job.jobId, task})
                 const updateStatus = () => {
                     jobsDispatch && jobsDispatch({type: 'setJobStatus', jobId: job.jobId, status: task.status, error: task.errorMessage})
                 }
                 task.onStatusChanged(updateStatus)
                 updateStatus()
             }
-        })
+        })()
     }, [jobsDispatch])
+
+    const addJob = useCallback((job: Job) => {
+        jobsDispatch && jobsDispatch({type: 'addJob', job})
+        restartJob(job)
+    }, [jobsDispatch, restartJob])
 
     const selectJob = useCallback((jobId: string, selected: boolean) => {
         jobsDispatch && jobsDispatch({type: 'selectJob', jobId, selected})
@@ -167,6 +204,10 @@ export const useJobs = () => {
 
     const moveJobsToFolder = useCallback((jobIds: string[], folder: string) => {
         jobsDispatch && jobsDispatch({type: 'moveJobsToFolder', jobIds, folder})
+    }, [jobsDispatch])
+
+    const setJobSearchString = useCallback((searchString: string) => {
+        jobsDispatch && jobsDispatch({type: 'setJobSearchString', searchString})
     }, [jobsDispatch])
 
     const setCurrentFolder = useCallback((folder?: string) => {
@@ -202,9 +243,13 @@ export const useJobs = () => {
         ))
     ), [jobsState.jobs, jobsState.currentFolder])
 
+    const jobsFiltered = useMemo(() => (
+        jobsState.jobSearchString ? jobs.filter(job => (checkSearch(job, jobsState.jobSearchString || ''))) : jobs
+    ), [jobs, jobsState.jobSearchString])
+
     const jobsSorted = useMemo(() => (
-        (jobs.sort((a, b) => (b.timestampCreated - a.timestampCreated)))
-    ), [jobs])
+        (jobsFiltered.sort((a, b) => (b.timestampCreated - a.timestampCreated)))
+    ), [jobsFiltered])
 
     return {
         jobs: jobsSorted,
@@ -215,11 +260,13 @@ export const useJobs = () => {
         selectJob,
         setSelectedJobIds,
         addJob,
+        restartJob,
         setCurrentJob,
         deleteJobs,
         setJobStatus,
         setCurrentFolder,
-        moveJobsToFolder
+        moveJobsToFolder,
+        setJobSearchString
     }
 }
 
@@ -253,6 +300,12 @@ export const SetupJobs: FunctionComponent<PropsWithChildren<{}>> = (props) => {
             {props.children}
         </JobsContext.Provider>
     )
+}
+
+const checkSearch = (job: Job, search: string) => {
+    if (!search) return true
+    if (job.function.name.includes(search)) return true
+    return false
 }
 
 export default JobsContext

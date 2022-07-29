@@ -1,5 +1,5 @@
 import { Checkbox, IconButton } from "@material-ui/core"
-import { Archive, Delete, FileCopy, KeyboardBackspace, Unarchive } from "@material-ui/icons"
+import { Archive, Delete, KeyboardBackspace, Unarchive } from "@material-ui/icons"
 import { FunctionComponent, useCallback } from "react"
 import { useJobs } from "./JobsContext"
 
@@ -9,10 +9,9 @@ type Props = {
     width: number
     height: number
     backgroundColor: string
-    onCreateNewJobBasedOnCurrent: () => void
 }
 
-const TopToolbar: FunctionComponent<Props> = ({left, top, width, height, backgroundColor, onCreateNewJobBasedOnCurrent}) => {
+const TopToolbar: FunctionComponent<Props> = ({left, top, width, height, backgroundColor}) => {
     const {currentJob, setCurrentJob, deleteJobs, selectedJobIds, jobs, setSelectedJobIds, currentFolder, moveJobsToFolder} = useJobs()
     const allJobsSelected = (selectedJobIds.length === jobs.length) && jobs.length > 0
     const someJobsSelected = selectedJobIds.length > 0
@@ -51,9 +50,6 @@ const TopToolbar: FunctionComponent<Props> = ({left, top, width, height, backgro
                             currentJob.folder === 'Archive' && (
                                 <IconButton title="Unarchive job" onClick={() => {moveJobsToFolder([currentJob.jobId], 'Default'); setCurrentJob(undefined); setSelectedJobIds([]);}}><Unarchive /></IconButton>
                             )
-                        }
-                        {
-                            <IconButton title="Create a new job based on this one" onClick={onCreateNewJobBasedOnCurrent}><FileCopy /></IconButton>
                         }
                     </span>
                 ) : ( // !currentJob
