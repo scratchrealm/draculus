@@ -1,3 +1,4 @@
+import Job, { isJob } from 'MainLayout/Job';
 import { validateObject } from '../figurl';
 import { isArrayOf, isEqualTo, isString, optional } from '../figurl/viewInterface/validateObject';
 
@@ -37,11 +38,18 @@ export type DraculusData = {
     type: 'Draculus'
     functions: DrFunction[]
     markdown?: string
+} | {
+    type: 'job'
+    job: Job
 }
+
 export const isDraculusData = (x: any): x is DraculusData => {
     return validateObject(x, {
         type: isEqualTo('Draculus'),
         functions: isArrayOf(isDrFunction),
         markdown: optional(isString)
+    }) || validateObject(x, {
+        type: isEqualTo('job'),
+        job: isJob
     })
 }

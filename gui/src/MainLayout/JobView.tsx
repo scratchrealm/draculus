@@ -15,7 +15,7 @@ type Props = {
     top: number
     width: number
     height: number
-    onCreateNewJobBasedOnCurrent: () => void
+    onCreateNewJobBasedOnCurrent?: () => void
     composing: boolean
 }
 
@@ -115,7 +115,11 @@ const JobView: FunctionComponent<Props> = ({job, left, top, width, height, onCre
                     </TableRow>
                 </TableBody>
             </Table>
-            <IconButton onClick={onCreateNewJobBasedOnCurrent} disabled={composing} title="Create a new job based on this one"><FileCopy /></IconButton>
+            {
+                onCreateNewJobBasedOnCurrent && (
+                    <IconButton onClick={onCreateNewJobBasedOnCurrent} disabled={composing} title="Create a new job based on this one"><FileCopy /></IconButton>
+                )
+            }
             <IconButton onClick={() => console.info(job)} title="Print job to browser dev console"><Adb /></IconButton>            
             <hr/ >
             {

@@ -1,6 +1,8 @@
 import { Checkbox, IconButton } from "@material-ui/core"
-import { Archive, Delete, KeyboardBackspace, Unarchive } from "@material-ui/icons"
-import { FunctionComponent, useCallback } from "react"
+import { Archive, Delete, KeyboardBackspace, Share, Unarchive } from "@material-ui/icons"
+import { storeFileData } from "figurl/getFileData"
+import { JSONStringifyDeterministic } from "figurl/viewInterface/kacheryTypes"
+import { FunctionComponent, useCallback, useState } from "react"
 import { useJobs } from "./JobsContext"
 
 type Props = {
@@ -15,6 +17,7 @@ const TopToolbar: FunctionComponent<Props> = ({left, top, width, height, backgro
     const {currentJob, setCurrentJob, deleteJobs, selectedJobIds, jobs, setSelectedJobIds, currentFolder, moveJobsToFolder} = useJobs()
     const allJobsSelected = (selectedJobIds.length === jobs.length) && jobs.length > 0
     const someJobsSelected = selectedJobIds.length > 0
+    const [status, setStatus] = useState<string>('')
     const handleSelectJobsClick = useCallback(() => {
         if (someJobsSelected) {
             setSelectedJobIds([])
@@ -23,6 +26,24 @@ const TopToolbar: FunctionComponent<Props> = ({left, top, width, height, backgro
             setSelectedJobIds(jobs.map(j => (j.jobId)))
         }
     }, [jobs, setSelectedJobIds, someJobsSelected])
+    const handleShareJob = useCallback(() => {
+        ;(async () => {
+            const data = {
+                type: 'job',
+                job: currentJob
+            }
+            setStatus('Preparing job figure...')
+            try {
+                const dataUri = await storeFileData(JSONStringifyDeterministic(data))
+                setStatus('')
+                const url = `https://figurl.org/f?v=gs://figurl/draculus-1&d=${dataUri}&label=${currentJob?.function.name}`
+                window.open(url, '_blank')?.focus()
+            }
+            finally {
+                setStatus('')
+            }
+        })()
+    }, [currentJob])
     return (
         <div style={{left, top, width, height, position: "absolute", backgroundColor, borderTop: 'solid 1px gray'}}>
             {
@@ -51,6 +72,11 @@ const TopToolbar: FunctionComponent<Props> = ({left, top, width, height, backgro
                                 <IconButton title="Unarchive job" onClick={() => {moveJobsToFolder([currentJob.jobId], 'Default'); setCurrentJob(undefined); setSelectedJobIds([]);}}><Unarchive /></IconButton>
                             )
                         }
+                        {
+                            currentJob.status === 'finished' && (
+                                <IconButton title="Share job" onClick={handleShareJob}><Share /></IconButton>
+                            )
+                        }
                     </span>
                 ) : ( // !currentJob
                     <span>
@@ -71,6 +97,9 @@ const TopToolbar: FunctionComponent<Props> = ({left, top, width, height, backgro
                         }
                     </span>
                 )
+            }
+            {
+                status && <span>&nbsp;{status}</span>
             }
         </div>
     )

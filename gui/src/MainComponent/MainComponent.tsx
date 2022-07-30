@@ -11,7 +11,7 @@ import ParameterInput from './ParameterInput';
 import './Table.css'
 
 type Props = {
-    data: DraculusData
+    data: DraculusData & {type: 'Draculus'}
     width: number
     height: number
 }

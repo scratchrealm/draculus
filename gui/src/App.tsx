@@ -1,5 +1,6 @@
 import { DraculusData, isDraculusData } from 'MainComponent/DraculusData';
 import { SetupFunctions } from 'MainLayout/FunctionsContext';
+import JobView from 'MainLayout/JobView';
 import MainLayout from 'MainLayout/MainLayout';
 import { useEffect, useState } from 'react';
 import './App.css';
@@ -45,17 +46,23 @@ function App() {
   }
 
   return (
-    <SetupFunctions data={data}>
-      <MainLayout
-        width={width - 1}
-        height={height - 1}
+    data.type === 'Draculus' ? (
+      <SetupFunctions data={data}>
+        <MainLayout
+          width={width - 1}
+          height={height - 1}
+        />
+      </SetupFunctions>
+    ) : data.type === 'job' ? (
+      <JobView
+        job={data.job}
+        left={10}
+        top={10}
+        width={width - 1 - 20}
+        height={height - 1 - 20}
+        composing={false}
       />
-    </SetupFunctions>
-    // <MainComponent
-    //   data={data}
-    //   width={width - 10}  // we don't want the scrollbar to appear even when the menu is opened
-    //   height={height - 5} // we don't want the scrollbar to appear
-    // />
+    ) : <span>Unexpected data.type</span>
   )
 }
 

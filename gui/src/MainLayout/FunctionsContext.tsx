@@ -20,7 +20,7 @@ export const useFunctions = () => {
     }
 }
 
-export const SetupFunctions: FunctionComponent<PropsWithChildren<{data: DraculusData}>> = (props) => {
+export const SetupFunctions: FunctionComponent<PropsWithChildren<{data: DraculusData & {type: 'Draculus'}}>> = (props) => {
     const value = useMemo(() => ({
         functionsState: {
             functions: props.data.functions,
