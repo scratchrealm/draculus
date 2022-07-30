@@ -53,42 +53,40 @@ const ComposeContent: FunctionComponent<Props> = ({left, top, width, height, set
         })
     }, [])
     useEffect(() => {
-        // select first function
+        // select first function (or use the function for the current job)
         if (selectedFunction === undefined) {
+            if (currentJob !== undefined) {
+                const f = (functions || []).filter(f => (f.name === currentJob.function.name))[0]
+                if (f) {
+                    setSelectedFunction(f)
+                    return
+                }
+            }
             if ((functions?.length || 0) > 0) {
                 setSelectedFunction((functions || [])[0])
             }
         }
-    }, [selectedFunction, functions])
+    }, [selectedFunction, functions, currentJob])
     useEffect(() => {
-        // set default parameters
-        if (selectedFunction !== undefined) {
-            const newParameterValues = {...parameterValues}
-            let somethingSet = false
-            for (let p of selectedFunction.parameters) {
-                if (p.default !== undefined) {
-                    if (parameterValues[p.name] === undefined) {
-                        newParameterValues[p.name] = p.default
-                        somethingSet = true
-                    }
+        if (!selectedFunction) return
+        // Reset the parameters to default when new function is selected (or use current job parameters)
+        const initialArguments: {[name: string]: any} = {}
+        for (let p of selectedFunction.parameters) {
+            if (currentJob && (currentJob.function.name === selectedFunction.name)) {
+                if (currentJob.inputArguments[p.name] !== undefined) {
+                    initialArguments[p.name] = currentJob.inputArguments[p.name]
                 }
             }
-            if (somethingSet) {
-                parameterValuesDispatch({type: 'setParameterValues', parameterValues: newParameterValues})
+            else {
+                if (p.default !== undefined) {
+                    initialArguments[p.name] = p.default
+                }
             }
         }
-    }, [parameterValues, selectedFunction])
+        parameterValuesDispatch({type: 'setParameterValues', parameterValues: initialArguments})
+    }, [selectedFunction, currentJob])
     useEffect(() => {
-        // important to reset when new function is selected!
-        parameterValuesDispatch({type: 'setParameterValues', parameterValues: {}})
-    }, [selectedFunction])
-    useEffect(() => {
-        if ((currentJob !== undefined) && (selectedFunction === undefined)) {
-            setSelectedFunction(currentJob.function)
-            parameterValuesDispatch({type: 'setParameterValues', parameterValues: currentJob.inputArguments})
-        }
-    }, [currentJob, selectedFunction])
-    useEffect(() => {
+        // Set the new job, but only if a function is selected and all the parameters are valid
         if (!selectedFunction) {
             setNewJob(undefined)
             return
